@@ -49,6 +49,7 @@ def war_loop(player, opponent):
     round_counter = 0
     while player.deck and opponent.deck:
         round_counter += 1
+        round_done = False
         print(f"Round {round_counter}:")
         card1 = player.deck.pop(0)
         card2 = opponent.deck.pop(0)
@@ -61,18 +62,33 @@ def war_loop(player, opponent):
         if card1_value > card2_value:
             print(f"{player.player_name} wins this round!\n")
             player.deck.extend([card1, card2])
+            round_done = True
         elif card1_value < card2_value:
             print(f"{opponent.opponent_name} wins this round!\n")
             opponent.deck.extend([card1, card2])
+            round_done = True
         else:
             print("War!\n")
             player.deck, opponent.deck = handle_war(player, opponent)
+            round_done = True
+
+        if player.deck and opponent.deck and round_done:
+            print("\n""The round has concluded. Would you like to play another round? Y/N")
+            user_input = input().strip().upper()
+            if user_input == "Y":
+                round_done = False
+            elif user_input == "N":
+                print("Thanks for playing!")
+                break
+            else:
+                print("Please input a valid input.")
+        
         
         #If player or opponent runs out of cards, win condition#
-        if not player.deck:
+        if not player.deck and round_done:
             print(f"{player.player_name} has run out of cards. {opponent.opponent_name} wins the game!")
             break
-        elif not opponent.deck:
+        elif not opponent.deck and round_done:
             print (f"{opponent.opponent_name} has run out of cards. {player.player_name} has won the game!")
             break
 
@@ -111,14 +127,12 @@ def handle_war(player, opponent):
     return player.deck, opponent.deck
 
 # Running the game #
-print("Welcome to WarPython! The game where you can play the War card game right in your Python terminal!")
-print("Please input your name, and press Enter.")
+print("\nWelcome to WarPython! The game where you can play the War card game right in your Python terminal!")
+print("\nWar is a two-player card game where the objective is to win all the cards. The deck is shuffled and split evenly between the players, who simultaneously reveal the top card of their decks. The player with the higher card wins both cards and adds them to the bottom of their deck, with cards ranked from 2 (lowest) to Ace (highest). If the cards are of equal value, a \"war\" occurs: each player places three cards face down and one card face up. The player with the higher face-up card wins all the cards played during the war. If these cards are also equal, the process repeats. The game continues until one player has all the cards, winning the game.")
+print("\nPlease input your name, and press Enter.")
 player = Player(input())
 print("Name your opponent, and press Enter.")
 opponent = Opponent(input())
 print("Alright, let's go to War!")
 war_loop(player, opponent)
     
-
-
-
